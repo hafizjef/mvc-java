@@ -1,7 +1,5 @@
 package com.xyz.crms.controller.manager;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,7 +9,13 @@ import java.util.Date;
 
 import com.xyz.crms.model.Customer;
 
-public class CustomerManager {
+class CustomerManager {
+	
+	private Facade facade;
+	
+	CustomerManager(Facade facade) {
+		this.facade = facade;
+	}
 	
 	// Helper methods
 
@@ -49,26 +53,15 @@ public class CustomerManager {
 	
 	// End helper methods
 
-	public int addCustomer(Customer customer) throws ClassNotFoundException, SQLException{
+	int addCustomer(Customer customer) throws SQLException{
 
-		// Load DB Driver
-		Class.forName("org.apache.derby.jdbc.ClientDriver");
-
-		Connection connection = DriverManager.getConnection("jdbc:derby://localhost:1527/dbCRMS", "user", "123");
-
-		// Create SQL Statement
-		PreparedStatement ps = connection.prepareStatement("INSERT INTO Customer (Name, LicenseNo, PhoneNo) VALUES (?, ?, ?)",
-				PreparedStatement.RETURN_GENERATED_KEYS);
+		PreparedStatement ps = facade.prepareStatement("INSERT INTO Customer (Name, LicenseNo, PhoneNo) VALUES (?, ?, ?)");
 
 		writeCustomer(customer, ps);
-
-
 		int status = ps.executeUpdate();
-		connection.close();
 
 		if (status != 0) {
 			ResultSet rs = ps.getGeneratedKeys();
-
 			if (rs.next()) {
 				customer.setCustomerID(rs.getInt(1));
 			}
@@ -77,25 +70,15 @@ public class CustomerManager {
 		return status;
 	}
 
-	public int updateCustomer(Customer customer) throws ClassNotFoundException, SQLException{
-
-		// Load DB Driver
-		Class.forName("org.apache.derby.jdbc.ClientDriver");
-
-		Connection connection = DriverManager.getConnection("jdbc:derby://localhost:1527/dbCRMS", "user", "123");
-
-		// Create SQL Statement
-		PreparedStatement ps = connection.prepareStatement("UPDATE Customer SET Name=?, LicenseNo=?, PhoneNo=? WHERE CustomerID=?",
-				PreparedStatement.RETURN_GENERATED_KEYS);
+	int updateCustomer(Customer customer) throws SQLException{
+		
+		PreparedStatement ps = facade.prepareStatement("UPDATE Customer SET Name=?, LicenseNo=?, PhoneNo=? WHERE CustomerID=?");
 
 		writeCustomer(customer, ps);
-
 		int status = ps.executeUpdate();
-		connection.close();
 
 		if (status != 0) {
 			ResultSet rs = ps.getGeneratedKeys();
-
 			if (rs.next()) {
 				customer.setCustomerID(rs.getInt(1));
 			}
@@ -105,67 +88,37 @@ public class CustomerManager {
 	}
 
 
-	public int deleteCustomer(Customer customer) throws ClassNotFoundException, SQLException{
-
-		// Load DB Driver
-		Class.forName("org.apache.derby.jdbc.ClientDriver");
-
-		Connection connection = DriverManager.getConnection("jdbc:derby://localhost:1527/dbCRMS", "user", "123");
-
-		// Create SQL Statement
-		PreparedStatement ps = connection.prepareStatement("DELETE FROM Customer WHERE CustomerID=?",
-				PreparedStatement.RETURN_GENERATED_KEYS);
+	int deleteCustomer(Customer customer) throws SQLException{
+		
+		PreparedStatement ps = facade.prepareStatement("DELETE FROM Customer WHERE CustomerID=?");
 
 		ps.setInt(1, customer.getCustomerID());
-
 		int status = ps.executeUpdate();
-		connection.close();
-
 		return status;
 	}
 
 
-	public ArrayList<Customer> searchCustomers(String keyword) throws ClassNotFoundException, SQLException{
+	ArrayList<Customer> searchCustomers(String keyword) throws SQLException{
 
-		// Load DB Driver
-		Class.forName("org.apache.derby.jdbc.ClientDriver");
-
-		Connection connection = DriverManager.getConnection("jdbc:derby://localhost:1527/dbCRMS", "user", "123");
-
-		// Create SQL Statement
 		PreparedStatement ps = null;
 
 		// Ternary operator
-		ps = connection.prepareStatement("SELECT * FROM Customer WHERE UPPER(Name) LIKE ?",
-				PreparedStatement.RETURN_GENERATED_KEYS) ;
-
+		ps = facade.prepareStatement("SELECT * FROM Customer WHERE UPPER(Name) LIKE ?") ;
 		ps.setString(1, "%" + keyword.toUpperCase() + "%");
-
 		ArrayList<Customer> customers = searchCustomers(ps);
-
-		connection.close();
 
 		return customers;
 	}
 
 
-	public ArrayList<Customer> searchCustomers(Date start) throws ClassNotFoundException, SQLException{
+	ArrayList<Customer> searchCustomers(Date start) throws SQLException{
 
-		// Load DB Driver
-		Class.forName("org.apache.derby.jdbc.ClientDriver");
-
-		Connection connection = DriverManager.getConnection("jdbc:derby://localhost:1527/dbCRMS", "user", "123");
-
-		// Create SQL Statement
-		PreparedStatement ps = connection.prepareStatement("SELECT * FROM Customer WHERE CustomerID NOT IN (SELECT CustomerID FROM Rental WHERE ? BETWEEN"
+		PreparedStatement ps = facade.prepareStatement("SELECT * FROM Customer WHERE CustomerID NOT IN (SELECT CustomerID FROM Rental WHERE ? BETWEEN"
 				+ " Start AND {fn TIMESTAMPADD(SQL_TSI_MINUTE, Duration * 60 - 1, Start)}) AND Status = 'A'");
 
 		// Convert Date to timestamp
 		ps.setTimestamp(1, new Timestamp(start.getTime()));
-
 		ArrayList<Customer> customers = searchCustomers(ps);
-		connection.close();
-
 		return customers;
 	}
 }
