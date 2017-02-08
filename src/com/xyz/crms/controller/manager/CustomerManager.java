@@ -3,18 +3,17 @@ package com.xyz.crms.controller.manager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 
 import com.xyz.crms.model.Customer;
 
-class CustomerManager {
+class CustomerManager extends AbstractTableManager {
 	
 	private Facade facade;
 	
 	CustomerManager(Facade facade) {
-		this.facade = facade;
+		super(facade);
 	}
 	
 	// Helper methods
@@ -100,10 +99,8 @@ class CustomerManager {
 
 	ArrayList<Customer> searchCustomers(String keyword) throws SQLException{
 
-		PreparedStatement ps = null;
-
 		// Ternary operator
-		ps = facade.prepareStatement("SELECT * FROM Customer WHERE UPPER(Name) LIKE ?") ;
+		PreparedStatement ps = facade.prepareStatement("SELECT * FROM Customer WHERE UPPER(Name) LIKE ?") ;
 		ps.setString(1, "%" + keyword.toUpperCase() + "%");
 		ArrayList<Customer> customers = searchCustomers(ps);
 
@@ -117,7 +114,7 @@ class CustomerManager {
 				+ " Start AND {fn TIMESTAMPADD(SQL_TSI_MINUTE, Duration * 60 - 1, Start)}) AND Status = 'A'");
 
 		// Convert Date to timestamp
-		ps.setTimestamp(1, new Timestamp(start.getTime()));
+		ps.setTimestamp(1, toTimestamp(start));
 		ArrayList<Customer> customers = searchCustomers(ps);
 		return customers;
 	}

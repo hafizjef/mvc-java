@@ -26,16 +26,18 @@ public class Tester {
 		//		} else {
 		//			System.out.println("Unable to add a new car!");
 		//		}
-		
+
 		Facade facade = new Facade();
-		
+
 		ArrayList<Car> cars = facade.searchCars("sky", 1);
-		
-		for (Car car : cars) {
-			
-			System.out.println(car.getCarID() + "\t" + car.getModel() + "\t" + car.getPlateNol());
+
+		for (Car c : cars) {
+
+			System.out.println(c.getCarID() + "\t" + c.getModel());
 		}
-		
+
+
+
 		facade.close();
 	}
 

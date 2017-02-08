@@ -3,19 +3,14 @@ package com.xyz.crms.controller.manager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 
 import com.xyz.crms.model.Car;
 
-class CarManager {
-	
-	
-	private Facade facade;
-	
+class CarManager extends AbstractTableManager {
 	CarManager(Facade facade) {
-		this.facade = facade;
+		super(facade);
 	}
 	
 	
@@ -152,7 +147,7 @@ class CarManager {
 				+ " Start AND {fn TIMESTAMPADD(SQL_TSI_MINUTE, Duration * 60 - 1, Start)}) AND Status = 'A'");
 
 		// Convert Date to timestamp
-		ps.setTimestamp(1, new Timestamp(start.getTime()));
+		ps.setTimestamp(1, toTimestamp(start));
 
 		ArrayList<Car> cars = searchCars(ps);
 
