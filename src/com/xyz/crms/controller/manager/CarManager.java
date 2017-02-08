@@ -112,8 +112,22 @@ public class CarManager {
 		
 		ps.setString(1, "%" + keyword.toUpperCase() + "%");
 
-
 		ResultSet rs = ps.executeQuery();
+		
+		while (rs.next()) {
+			
+			Car car = new Car();
+			
+			car.setCarID(rs.getInt("CarID"));
+			car.setPlateNol(rs.getString("PlateNo"));
+			car.setModel(rs.getString("Model"));
+			car.setPrice(rs.getDouble("Price"));
+			car.setStatus(rs.getString("Status").charAt(0));
+			
+			cars.add(car);
+		}
+		
+		rs.close();
 		connection.close();
 
 		return cars;
