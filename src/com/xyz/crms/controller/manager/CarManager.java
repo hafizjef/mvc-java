@@ -185,7 +185,7 @@ public class CarManager {
 
 		// Create SQL Statement
 		PreparedStatement ps = connection.prepareStatement("SELECT * FROM Car WHERE CarID NOT IN (SELECT CarID FROM Rental WHERE ? BETWEEN"
-				+ " Start AND {fn TIMESTAMPADD(SQL_TSI_MINUTE, Duration * 60 - 1, Start)} AND Status = 'A'");
+				+ " Start AND {fn TIMESTAMPADD(SQL_TSI_MINUTE, Duration * 60 - 1, Start)}) AND Status = 'A'");
 
 		// Convert Date to timestamp
 		ps.setTimestamp(1, new Timestamp(start.getTime()));

@@ -4,7 +4,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.xyz.crms.controller.manager.CarManager;
+import com.xyz.crms.controller.manager.CustomerManager;
 import com.xyz.crms.model.Car;
+import com.xyz.crms.model.Customer;
 
 public class Tester {
 
@@ -27,6 +29,15 @@ public class Tester {
 		//		} else {
 		//			System.out.println("Unable to add a new car!");
 		//		}
+		
+		CustomerManager cm = new CustomerManager();
+		Customer cust = new Customer();
+		
+		cust.setName("Abdul");
+		cust.setLicenseNo("111-111-111");
+		cust.setPhoneNo("012-2345678");
+		
+		cm.addCustomer(cust);
 
 		CarManager manager = new CarManager();
 		ArrayList<Car> cars = manager.searchCars("sky", 1);
