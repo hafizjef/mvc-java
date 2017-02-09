@@ -40,7 +40,7 @@ public class Tester {
 		System.out.println("Please Enter a rental time : ");
 		Date start = sdf.parse(reader.readLine());
 		
-		
+		//
 
 		Facade facade = new Facade();
 
