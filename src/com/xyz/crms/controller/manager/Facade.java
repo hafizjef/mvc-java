@@ -9,12 +9,14 @@ import java.util.Date;
 
 import com.xyz.crms.model.Car;
 import com.xyz.crms.model.Customer;
+import com.xyz.crms.model.Rental;
 
 // Singleton
 public class Facade implements AutoCloseable {
 	private Connection connection;
 	private CarManager carManager;
 	private CustomerManager customerManager;
+	private RentalManager rentalManager;
 	
 	static {
 		
@@ -43,6 +45,10 @@ public class Facade implements AutoCloseable {
 	
 	private CustomerManager getCustomerManager() {
 		return customerManager == null ? customerManager = new CustomerManager(this) : customerManager;
+	}
+	
+	private RentalManager getRentalManager() {
+		return rentalManager == null ? rentalManager = new RentalManager(this) : rentalManager;
 	}
 	
 	@Override
@@ -94,5 +100,10 @@ public class Facade implements AutoCloseable {
 	
 	public ArrayList<Customer> searchCustomers(Date start) throws SQLException{
 		return getCustomerManager().searchCustomers(start);
+	}
+	
+	// Rental Manager Methods
+	public int addRental(Rental rental) throws SQLException {
+		return getRentalManager().addRental(rental);
 	}
 }
