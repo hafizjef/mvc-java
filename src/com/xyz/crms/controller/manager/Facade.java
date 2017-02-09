@@ -106,4 +106,8 @@ public class Facade implements AutoCloseable {
 	public int addRental(Rental rental) throws SQLException {
 		return getRentalManager().addRental(rental);
 	}
+	
+	public ArrayList<Rental> searchRentals(int id, int type, Date date) throws SQLException {
+		return getRentalManager().searchRentals(id, type, date);
+	}
 }

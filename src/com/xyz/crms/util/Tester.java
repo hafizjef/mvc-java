@@ -14,7 +14,7 @@ import com.xyz.crms.model.Car;
 
 public class Tester {
 
-	public static void main(String[] args) throws SQLException, ParseException, IOException {
+	public static void main(String[] args) throws Exception {
 
 		//		Car car = new Car();
 		//		

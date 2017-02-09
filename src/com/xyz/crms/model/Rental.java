@@ -1,13 +1,13 @@
 package com.xyz.crms.model;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 public class Rental {
 
 	private int rentalID;
 	private int carID;
 	private int customerID;
-	private Timestamp start;
+	private Date start;
 	private int duration;
 	private double amount;
 	
@@ -29,10 +29,10 @@ public class Rental {
 	public void setCustomerID(int customerID) {
 		this.customerID = customerID;
 	}
-	public Timestamp getStart() {
+	public Date getStart() {
 		return start;
 	}
-	public void setStart(Timestamp start) {
+	public void setStart(Date start) {
 		this.start = start;
 	}
 	public int getDuration() {
