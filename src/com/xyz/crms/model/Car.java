@@ -3,7 +3,7 @@ package com.xyz.crms.model;
 public class Car {
 	
 	private int carID;
-	private String plateNol;
+	private String plateNo;
 	private String model;
 	private double price;
 	private char status;
@@ -16,12 +16,12 @@ public class Car {
 		return carID;
 	}
 
-	public String getPlateNol() {
-		return plateNol;
+	public String getPlateNo() {
+		return plateNo;
 	}
 
-	public void setPlateNol(String plateNol) {
-		this.plateNol = plateNol;
+	public void setPlateNo(String plateNo) {
+		this.plateNo = plateNo;
 	}
 
 	public String getModel() {

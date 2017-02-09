@@ -109,7 +109,7 @@ class CustomerManager extends AbstractTableManager {
 	ArrayList<Customer> searchCustomers(Date start) throws SQLException{
 
 		PreparedStatement ps = facade.prepareStatement("SELECT * FROM Customer WHERE CustomerID NOT IN (SELECT CustomerID FROM Rental WHERE ? BETWEEN"
-				+ " Start AND {fn TIMESTAMPADD(SQL_TSI_MINUTE, Duration * 60 - 1, Start)}) AND Status = 'A'");
+				+ " Start AND {fn TIMESTAMPADD(SQL_TSI_MINUTE, Duration * 60 - 1, Start)})");
 
 		// Convert Date to timestamp
 		ps.setTimestamp(1, toTimestamp(start));

@@ -18,7 +18,7 @@ class CarManager extends AbstractTableManager {
 
 	private void writeCar(Car car, PreparedStatement ps) throws SQLException {
 
-		ps.setString(1, car.getPlateNol());
+		ps.setString(1, car.getPlateNo());
 		ps.setString(2, car.getModel());
 		ps.setDouble(3, car.getPrice());
 		ps.setString(4, Character.toString(car.getStatus()));
@@ -38,7 +38,7 @@ class CarManager extends AbstractTableManager {
 			Car car = new Car();
 
 			car.setCarID(rs.getInt("CarID"));
-			car.setPlateNol(rs.getString("PlateNo"));
+			car.setPlateNo(rs.getString("PlateNo"));
 			car.setModel(rs.getString("Model"));
 			car.setPrice(rs.getDouble("Price"));
 			car.setStatus(rs.getString("Status").charAt(0));
