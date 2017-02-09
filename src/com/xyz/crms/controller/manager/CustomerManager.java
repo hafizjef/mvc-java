@@ -10,8 +10,6 @@ import com.xyz.crms.model.Customer;
 
 class CustomerManager extends AbstractTableManager {
 	
-	private Facade facade;
-	
 	CustomerManager(Facade facade) {
 		super(facade);
 	}
