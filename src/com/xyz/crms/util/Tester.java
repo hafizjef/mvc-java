@@ -1,6 +1,12 @@
 package com.xyz.crms.util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Date;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import com.xyz.crms.controller.manager.Facade;
@@ -8,7 +14,7 @@ import com.xyz.crms.model.Car;
 
 public class Tester {
 
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) throws SQLException, ParseException, IOException {
 
 		//		Car car = new Car();
 		//		
@@ -26,6 +32,15 @@ public class Tester {
 		//		} else {
 		//			System.out.println("Unable to add a new car!");
 		//		}
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		
+		
+		System.out.println("Please Enter a rental time : ");
+		Date start = sdf.parse(reader.readLine());
+		
+		
 
 		Facade facade = new Facade();
 
