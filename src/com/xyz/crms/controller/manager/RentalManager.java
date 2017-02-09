@@ -12,7 +12,6 @@ class RentalManager extends AbstractTableManager {
 
 	RentalManager(Facade facade) {
 		super(facade);
-		// TODO Auto-generated constructor stub
 	}
 	
 	int addRental(Rental rental) throws SQLException {
