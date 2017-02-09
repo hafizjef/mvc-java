@@ -3,50 +3,109 @@ package com.xyz.view;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class AddCarDialog extends JDialog {
+import com.xyz.crms.controller.manager.Facade;
+import com.xyz.crms.model.Car;
+
+public class AddCarDialog extends JDialog implements ActionListener {
+	
 	private static final long serialVersionUID = 1L;
 
+	private JButton submitButton = new JButton("Submit");
+	private JButton resetButton = new JButton("Reset");
+	
+	private JTextField plateNoInput = new JTextField();
+	private JTextField modelInput = new JTextField();
+	private JTextField priceInput = new JTextField();
+	private JComboBox<String> statusInput = new JComboBox<>(new String[] {"Available", "Temporarily Unavailable"});
+	
 	public AddCarDialog(MainMenuFrame frame) {
 		super(frame, frame.getTitle(), true);
 		
-		JPanel center = new JPanel(new GridLayout(4, 2));
+		JPanel center = new JPanel(new GridLayout(4, 2, 5, 5));
 		JPanel south = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		
+		center.setBorder(BorderFactory.createEmptyBorder(16, 16, 0, 16));
+		south.setBorder(BorderFactory.createEmptyBorder(12, 10, 10, 10));
 		
 		this.add(center, BorderLayout.CENTER);
 		this.add(south, BorderLayout.SOUTH);
 		
-		JTextField plateNoInput = new JTextField();
-		JTextField modelInput = new JTextField();
-		JTextField priceInput = new JTextField();
-		JComboBox<String> statusInput = new JComboBox<>(new String[] {"Available", "Temporarily Unavailable"});
+		center.add(new JLabel("Plate Number:", JLabel.RIGHT));
+		center.add(plateNoInput);
+		center.add(new JLabel("Model:", JLabel.RIGHT));
+		center.add(modelInput);
+		center.add(new JLabel("Price/hour (RM):", JLabel.RIGHT));
+		center.add(priceInput);
+		center.add(new JLabel("Status:", JLabel.RIGHT));
+		center.add(statusInput);
 		
-		this.add(new JLabel("Plate Number:"));
-		this.add(plateNoInput);
-		this.add(new JLabel("Model:"));
-		this.add(modelInput);
-		this.add(new JLabel("Price/hour (RM)"));
-		this.add(priceInput);
-		this.add(new JLabel("Status:"));
-		this.add(statusInput);
 		
-		JButton submitButton = new JButton("Submit");
-		JButton resetButton = new JButton("Reset");
-				south.add(submitButton);
+		south.add(submitButton);
 		south.add(resetButton);
 		
+		submitButton.addActionListener(this);
+		resetButton.addActionListener(this);
 		
 		this.pack();
 		this.setResizable(false);
 		this.setLocationRelativeTo(null);
-		this.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		this.setVisible(true);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		Object source = e.getSource();
+		
+		if (source == submitButton) {
+			// TODO Implement submit
+			String plateNo = plateNoInput.getText();
+			String model = modelInput.getText();
+			double price = Double.parseDouble(priceInput.getText());
+			char status = statusInput.getSelectedItem().toString().charAt(0);
+			
+			Car car = new Car();
+			
+			car.setPlateNo(plateNo);
+			car.setModel(model);
+			car.setPrice(price);
+			car.setStatus(status);
+			
+			try {
+				Facade facade = new Facade();
+				int add = facade.addCar(car);
+				
+				if (add != 0) {
+					JOptionPane.showMessageDialog(this, "Successfully added a new car", getTitle(), JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(this, "Unable to add a new car", getTitle(), JOptionPane.WARNING_MESSAGE);
+				}
+				
+				facade.close();
+				
+			} catch (SQLException ex) {
+				JOptionPane.showMessageDialog(this, "Unable to add a new car: " + ex.getMessage(), getTitle(), JOptionPane.WARNING_MESSAGE);
+			}
+			
+			
+		} else {
+			plateNoInput.setText("");
+			modelInput.setText("");
+			priceInput.setText("");
+			statusInput.setSelectedIndex(0);
+		}
 	}
 }

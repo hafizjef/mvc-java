@@ -1,13 +1,26 @@
 package com.xyz.view;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.UIManager;
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
-public class MainMenuFrame extends JFrame {
+public class MainMenuFrame extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
+	
+	private JMenuItem addCarMenuItem = new JMenuItem("Add Car");
+	private JMenuItem searchCarsMenuItem = new JMenuItem("Search Cars");
+	private JMenuItem addCustomerMenuItem = new JMenuItem("Add Customer");
+	private JMenuItem searchCustomersMenuItem = new JMenuItem("Search Customer");
+	private JMenuItem addRentalMenuItem = new JMenuItem("Add Rental");
+	private JMenuItem searchRentalsMenuItem = new JMenuItem("Search Rentals");
+	private JMenuItem viewReportsMenuItem = new JMenuItem("View Reports");
 
 	public MainMenuFrame() {
 		
@@ -23,14 +36,6 @@ public class MainMenuFrame extends JFrame {
 		menubar.add(customerMenu);
 		menubar.add(rentalMenu);
 		
-		JMenuItem addCarMenuItem = new JMenuItem("Add Car");
-		JMenuItem searchCarsMenuItem = new JMenuItem("Search Cars");
-		JMenuItem addCustomerMenuItem = new JMenuItem("Add Customer");
-		JMenuItem searchCustomersMenuItem = new JMenuItem("Search Customer");
-		JMenuItem addRentalMenuItem = new JMenuItem("Add Rental");
-		JMenuItem searchRentalsMenuItem = new JMenuItem("Search Rentals");
-		JMenuItem viewReportsMenuItem = new JMenuItem("View Reports");
-		
 		carMenu.add(addCarMenuItem);
 		carMenu.add(searchCarsMenuItem);
 		customerMenu.add(addCustomerMenuItem);
@@ -39,6 +44,8 @@ public class MainMenuFrame extends JFrame {
 		rentalMenu.add(searchRentalsMenuItem);
 		rentalMenu.add(viewReportsMenuItem);
 		
+		
+		addCarMenuItem.addActionListener(this);
 		this.add(new JLabel("Welcome to " + getTitle(), JLabel.CENTER));
 		
 		this.setSize(400, 300);
@@ -49,9 +56,21 @@ public class MainMenuFrame extends JFrame {
 		this.setVisible(true);
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
+		//UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		UIManager.setLookAndFeel(new NimbusLookAndFeel());
 		new MainMenuFrame();
 		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent event) {
+		
+		Object source = event.getSource();
+		
+		if (source == addCarMenuItem) {
+			new AddCarDialog(this);
+		}
 	}
 
 }
