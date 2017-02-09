@@ -48,4 +48,9 @@ public class Car {
 		this.status = status;
 	}
 	
+	@Override
+	public String toString() {
+		return model + " (" + plateNo + ") - RM " + price;
+	}
+	
 }

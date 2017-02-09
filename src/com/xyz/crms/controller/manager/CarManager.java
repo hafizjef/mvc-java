@@ -113,7 +113,7 @@ class CarManager extends AbstractTableManager {
 		PreparedStatement ps = null;
 
 		// Ternary operator
-		ps = facade.prepareStatement("SELECT * FROM Car WHERE UPPER(" + (type == 0 ? "PlateNo" : "Model") + ") LIKE ?") ;
+		ps = facade.prepareStatement("SELECT * FROM Car WHERE UPPER(" + (type == 0 ? "PlateNo" : "Model") + ") LIKE ? ORDER BY Model") ;
 		ps.setString(1, "%" + keyword.toUpperCase() + "%");
 
 		ArrayList<Car> cars = searchCars(ps);
@@ -127,11 +127,11 @@ class CarManager extends AbstractTableManager {
 
 
 		if (type == 0) {
-			ps = facade.prepareStatement("SELECT * FROM Car WHERE Price <= ?");
+			ps = facade.prepareStatement("SELECT * FROM Car WHERE Price <= ? ORDER BY Model");
 		} else if (type == 1) {
-			ps = facade.prepareStatement("SELECT * FROM Car WHERE Price = ?");
+			ps = facade.prepareStatement("SELECT * FROM Car WHERE Price = ? ORDER BY Model");
 		} else {
-			ps = facade.prepareStatement("SELECT * FROM Car WHERE Price >= ?");
+			ps = facade.prepareStatement("SELECT * FROM Car WHERE Price >= ? ORDER BY Model");
 		}
 
 		ps.setDouble(1, price);
@@ -144,7 +144,7 @@ class CarManager extends AbstractTableManager {
 
 		// Create SQL Statement
 		PreparedStatement ps = facade.prepareStatement("SELECT * FROM Car WHERE CarID NOT IN (SELECT CarID FROM Rental WHERE ? BETWEEN"
-				+ " Start AND {fn TIMESTAMPADD(SQL_TSI_MINUTE, Duration * 60 - 1, Start)}) AND Status = 'A'");
+				+ " Start AND {fn TIMESTAMPADD(SQL_TSI_MINUTE, Duration * 60 - 1, Start)}) AND Status = 'A' ORDER BY Model");
 
 		// Convert Date to timestamp
 		ps.setTimestamp(1, toTimestamp(start));
