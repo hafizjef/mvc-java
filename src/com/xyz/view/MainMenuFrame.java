@@ -47,6 +47,8 @@ public class MainMenuFrame extends JFrame implements ActionListener {
 		
 		addCarMenuItem.addActionListener(this);
 		searchCarsMenuItem.addActionListener(this);
+		addCustomerMenuItem.addActionListener(this);
+		
 		this.add(new JLabel("Welcome to " + getTitle(), JLabel.CENTER));
 		
 		this.setSize(400, 300);
@@ -73,6 +75,8 @@ public class MainMenuFrame extends JFrame implements ActionListener {
 			new CarEntryDialog(this, null);
 		} else if (source == searchCarsMenuItem) {
 			new SearchCarsDialog(this);
+		} else if (source == addCustomerMenuItem) {
+			new CustomerEntryDialog(this, null);
 		}
 	}
 
