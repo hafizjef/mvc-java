@@ -96,17 +96,10 @@ public class CarEntryDialog extends AbstractDialog {
 			}
 
 			try {
-				price = Double.parseDouble(priceInput.getText());
-				if (price < 1) {
-					invalid++;
-					message += "\n- Price must be greater than 0";
-				} else if (price > 20) {
-					invalid++;
-					message += "\n- Price must be less than 21";
-				}
+				price = validate("Price", priceInput.getText(), true, true, true, 1, 20);
 			} catch (Exception ex) {
+				message += "\n" + ex.getMessage();
 				invalid++;
-				message += "\n- Price must be a number";
 			}
 
 			if (invalid != 0) {

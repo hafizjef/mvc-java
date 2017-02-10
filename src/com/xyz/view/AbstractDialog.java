@@ -15,7 +15,7 @@ import javax.swing.border.Border;
 public abstract class AbstractDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	protected MainMenuFrame frame;
 	protected JPanel center = new JPanel();
 	protected JPanel south = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -23,46 +23,46 @@ public abstract class AbstractDialog extends JDialog implements ActionListener {
 
 	public AbstractDialog(MainMenuFrame frame, LayoutManager layout) {
 		super(frame, frame.getTitle(), true);
-		
+
 		this.frame = frame;
-		
+
 		center.setBorder(empty);
 		center.setLayout(layout);
-		
+
 		center.setBorder(BorderFactory.createEmptyBorder(16, 16, 0, 16));
 		south.setBorder(BorderFactory.createEmptyBorder(12, 10, 10, 10));
-		
+
 		this.add(center, BorderLayout.CENTER);
 		this.add(south, BorderLayout.SOUTH);
 
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 	}
-	
+
 	protected void finalizeUI(JButton... buttons) {
-		
+
 		for (int i = 0; i < buttons.length; i++) {
 			buttons[i].addActionListener(this);
-			
+
 			if (i == 0) {
 				this.getRootPane().setDefaultButton(buttons[0]);
 			}
 		}
-		
+
 		this.pack();
 		this.setSize(frame.getWidth(), getHeight());
 		this.setResizable(false);
 		this.setLocationRelativeTo(frame);
 		this.setVisible(true);
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent event) {
-	
+
 	}
-	
+
 	protected String validate(String name, String value, boolean required, int maxlength) throws Exception {
 		int length = value.trim().length();
-		
+
 		if (required) {
 			if (length == 0) {
 				throw new Exception("- " + name + " is required.");
@@ -74,8 +74,41 @@ public abstract class AbstractDialog extends JDialog implements ActionListener {
 				throw new Exception("- " + "must be less or equals to " + maxlength + " characters");
 			}
 		}
-		
+
 		return value;	
+	}
+
+	protected double validate(String name, String value, boolean required, boolean hasMin, boolean hasMax, double minVal, double maxVal) throws Exception {
+
+		value = value.trim();
+		double number = 0;
+		boolean empty = value.isEmpty();
+		
+		
+		if (required && empty) {
+			throw new Exception("- " + name + " is required.");
+
+		}
+
+		if (!empty) {
+			
+			try {
+				number = Double.parseDouble(value);
+			} catch (Exception ex) {
+				throw new Exception("- " + name + " is not in decimal format.");
+			}
+			
+			if (hasMin && number < minVal) {
+				throw new Exception("- " + name + " must be greater than or equals to " + minVal + ".");
+			}
+
+			if (hasMax && number > maxVal) {
+				throw new Exception("- " + name + " must be less than or equals to " + maxVal + ".");
+			}
+		}
+
+
+		return number;
 	}
 
 }

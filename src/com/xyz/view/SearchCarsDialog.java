@@ -69,47 +69,48 @@ public class SearchCarsDialog extends AbstractDialog {
 			String keyword = searchInput.getText();
 		
 			try (Facade facade = new Facade()) {
+				
 				ArrayList<Car> cars = null;
 				
-				if (type == 0 || type == 1) {
-					cars = facade.searchCars(keyword, type);
-				} else {
+				try {
 					
-					double price;
-					
-					try {
-						price = Double.parseDouble(keyword);
-					} catch (Exception ex) {
-						JOptionPane.showMessageDialog(this, "Invalid value", getTitle(), JOptionPane.INFORMATION_MESSAGE);
-						searchInput.grabFocus();
-						return;
+					if (type == 0 || type == 1) {
+						keyword = validate("Keyword", keyword, true, -1);
+						cars = facade.searchCars(keyword, type);
+					} else {
+						
+						double price = validate("Price", keyword, true, false, false, 0, 0);
+						cars = facade.searchCars(price, type - 2);
 					}
-					
-					cars = facade.searchCars(price, type - 2);
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(this, ex.getMessage().substring(1), getTitle(), JOptionPane.WARNING_MESSAGE);
 				}
+				
+				
 				
 				DefaultListModel<Car> model = new DefaultListModel<>();
 				
-				if (cars.size() !=0) {
-					carList.setEnabled(true);
-					editButton.setEnabled(true);
-					
-					for (Car car : cars) {
-						model.addElement(car);
+				if (cars != null) {
+					if (cars.size() !=0) {
+						carList.setEnabled(true);
+						editButton.setEnabled(true);
+						
+						for (Car car : cars) {
+							model.addElement(car);
+						}
+						
+					} else {
+						JOptionPane.showMessageDialog(this, "No results found", getTitle(), JOptionPane.INFORMATION_MESSAGE);
+						carList.setEnabled(false);
+						editButton.setEnabled(false);
+						searchInput.grabFocus();
 					}
 					
-				} else {
-					JOptionPane.showMessageDialog(this, "No results found", getTitle(), JOptionPane.INFORMATION_MESSAGE);
-					carList.setEnabled(false);
-					editButton.setEnabled(false);
-					searchInput.grabFocus();
+					carList.setModel(model);
 				}
 				
-				
-				carList.setModel(model);
-			} catch (SQLException ex) {
-				
-			}
+			} catch (SQLException ex) {}
+			
 		} else if (source == editButton) {
 			
 			Car car = carList.getSelectedValue();
