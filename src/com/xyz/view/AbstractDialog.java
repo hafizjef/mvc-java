@@ -5,6 +5,8 @@ import java.awt.FlowLayout;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -109,6 +111,21 @@ public abstract class AbstractDialog extends JDialog implements ActionListener {
 
 
 		return number;
+	}
+	
+	protected Date validate(String name, String keyword) throws Exception {
+		
+		Date date;
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		
+		try {
+			date = sdf.parse(keyword);
+		} catch (Exception ex) {
+			throw new Exception("- " + name + " is incorrect format");
+		}
+		
+		return date;
 	}
 
 }

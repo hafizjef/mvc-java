@@ -33,5 +33,9 @@ public class Customer {
 		this.phoneNo = phoneNo;
 	}
 	
+	@Override
+	public String toString() {
+		return name + " (" + phoneNo + ") " + "[" + licenseNo + "]";
+	}
 	
 }
