@@ -70,7 +70,7 @@ public class MainMenuFrame extends JFrame implements ActionListener {
 		Object source = event.getSource();
 		
 		if (source == addCarMenuItem) {
-			new AddCarDialog(this);
+			new CarEntryDialog(this, null);
 		} else if (source == searchCarsMenuItem) {
 			new SearchCarsDialog(this);
 		}

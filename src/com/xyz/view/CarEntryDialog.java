@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -19,7 +20,7 @@ import javax.swing.JTextField;
 import com.xyz.crms.controller.manager.Facade;
 import com.xyz.crms.model.Car;
 
-public class AddCarDialog extends JDialog implements ActionListener {
+public class CarEntryDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -29,11 +30,29 @@ public class AddCarDialog extends JDialog implements ActionListener {
 	private JTextField plateNoInput = new JTextField();
 	private JTextField modelInput = new JTextField();
 	private JTextField priceInput = new JTextField();
-	private JComboBox<String> statusInput = new JComboBox<>(new String[] {"Available", "Temporarily Unavailable"});
+	private JComboBox<String> statusInput = new JComboBox<>();
 
-	public AddCarDialog(MainMenuFrame frame) {
+	private boolean addOperation;
+	
+	private Car car;
+	
+	public CarEntryDialog(MainMenuFrame frame, Car car) {
 		super(frame, frame.getTitle(), true);
 
+		this.car = car;
+		this.addOperation = car == null;
+		
+		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+		
+		model.addElement("Available");
+		model.addElement("Temporarily Unavailable");
+		
+		if (!addOperation) {
+			model.addElement("Permanently Unavailable");
+		}
+		
+		statusInput.setModel(model);
+		
 		JPanel center = new JPanel(new GridLayout(4, 2, 5, 5));
 		JPanel south = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
@@ -59,6 +78,7 @@ public class AddCarDialog extends JDialog implements ActionListener {
 		submitButton.addActionListener(this);
 		resetButton.addActionListener(this);
 		
+		resetInput();
 		this.getRootPane().setDefaultButton(submitButton);
 
 		this.pack();
@@ -125,8 +145,11 @@ public class AddCarDialog extends JDialog implements ActionListener {
 					JOptionPane.showMessageDialog(this, "Please make sure the following fields are correct:" + message, getTitle(), JOptionPane.WARNING_MESSAGE);
 				}
 			} else {
-				Car car = new Car();
-
+				
+				if (addOperation) {
+					car = new Car();
+				}
+				
 				car.setPlateNo(plateNo);
 				car.setModel(model);
 				car.setPrice(price);
@@ -134,25 +157,64 @@ public class AddCarDialog extends JDialog implements ActionListener {
 
 				try (Facade facade = new Facade();) {
 
-					int add = facade.addCar(car);
-
-					if (add != 0) {
-						JOptionPane.showMessageDialog(this, "Successfully added a new car", getTitle(), JOptionPane.INFORMATION_MESSAGE);
+					if (addOperation) {
+						
+						int add = facade.addCar(car);
+						if (add != 0) {
+							JOptionPane.showMessageDialog(this, "Successfully added a new car", getTitle(), JOptionPane.INFORMATION_MESSAGE);
+						} else {
+							JOptionPane.showMessageDialog(this, "Unable to add a new car", getTitle(), JOptionPane.WARNING_MESSAGE);
+						}
+						
 					} else {
-						JOptionPane.showMessageDialog(this, "Unable to add a new car", getTitle(), JOptionPane.WARNING_MESSAGE);
+						
+						int update = facade.updateCar(car);
+						if (update != 0) {
+							JOptionPane.showMessageDialog(this, "Successfully edit an existing car", getTitle(), JOptionPane.INFORMATION_MESSAGE);
+						} else {
+							JOptionPane.showMessageDialog(this, "Unable to edit an existing car", getTitle(), JOptionPane.WARNING_MESSAGE);
+						}
+						
 					}
 
 				} catch (SQLException ex) {
-					JOptionPane.showMessageDialog(this, "Unable to add a new car: " + ex.getMessage(), getTitle(), JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(this, "Unable to save information: " + ex.getMessage(), getTitle(), JOptionPane.WARNING_MESSAGE);
 				}
 			}
 
 
-		} else {
+		} else if (source == resetButton) {
+			resetInput();
+		}
+	}
+	
+	private void resetInput() {
+		
+		if (addOperation) {
+			// On add car, Clear all input boxes
 			plateNoInput.setText("");
 			modelInput.setText("");
 			priceInput.setText("");
 			statusInput.setSelectedIndex(0);
+			
+		} else {
+			// On update car, set to default values
+			plateNoInput.setText(car.getPlateNo());
+			modelInput.setText(car.getModel());
+			priceInput.setText(Double.toString(car.getPrice()));
+
+			switch (car.getStatus()) {
+
+			case 'A':
+				statusInput.setSelectedIndex(0);
+				break;
+			case 'T':
+				statusInput.setSelectedIndex(1);
+				break;
+			case 'P':
+				statusInput.setSelectedIndex(2);
+				break;
+			}
 		}
 	}
 }

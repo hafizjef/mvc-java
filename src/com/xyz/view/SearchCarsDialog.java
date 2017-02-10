@@ -129,7 +129,7 @@ public class SearchCarsDialog extends JDialog implements ActionListener {
 			Car car = carList.getSelectedValue();
 			
 			if (car != null) {
-				new EditCarDialog((MainMenuFrame) this.getParent(), car);
+				new CarEntryDialog((MainMenuFrame) this.getParent(), car);
 			} else {
 				JOptionPane.showMessageDialog(this, "Please select a car to edit", getTitle(), JOptionPane.INFORMATION_MESSAGE);
 			}
