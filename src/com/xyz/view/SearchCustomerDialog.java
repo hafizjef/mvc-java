@@ -83,7 +83,7 @@ public class SearchCustomerDialog extends AbstractDialog {
 						Date date = validate("Date", keyword);
 						customers = facade.searchCustomers(date);
 					}
-				} catch (Exception ex) {
+				} catch (ValidationException ex) {
 					JOptionPane.showMessageDialog(this, ex.getMessage().substring(1), getTitle(), JOptionPane.WARNING_MESSAGE);
 				}
 				

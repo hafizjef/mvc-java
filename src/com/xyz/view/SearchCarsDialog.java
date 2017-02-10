@@ -82,7 +82,7 @@ public class SearchCarsDialog extends AbstractDialog {
 						double price = validate("Price", keyword, true, false, false, 0, 0);
 						cars = facade.searchCars(price, type - 2);
 					}
-				} catch (Exception ex) {
+				} catch (ValidationException ex) {
 					JOptionPane.showMessageDialog(this, ex.getMessage().substring(1), getTitle(), JOptionPane.WARNING_MESSAGE);
 				}
 				

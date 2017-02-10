@@ -1,11 +1,7 @@
 package com.xyz.view;
 
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -13,37 +9,20 @@ import javax.swing.JTextField;
 import com.xyz.crms.controller.manager.Facade;
 import com.xyz.crms.model.Customer;
 
-public class CustomerEntryDialog extends AbstractDialog {
+public class CustomerEntryDialog extends AbstractEntryDialog {
 
 	private static final long serialVersionUID = 1L;
-
-	private JButton submitButton = new JButton("Submit");
-	private JButton resetButton = new JButton("Reset");
 
 	private JTextField nameInput = new JTextField();
 	private JTextField licenseInput = new JTextField();
 	private JTextField phoneNoInput = new JTextField();
-
-	private boolean addOperation;
 	
 	private Customer customer;
 	
 	public CustomerEntryDialog(MainMenuFrame frame, Customer customer) {
-		super(frame, new GridLayout(4, 2, 5, 5));
+		super(frame, customer, 3);
 
-		this.customer = customer;
-		this.addOperation = customer == null;
-		
-		DefaultComboBoxModel<String> licenseNo = new DefaultComboBoxModel<>();
-		
-		licenseNo.addElement("Available");
-		licenseNo.addElement("Temporarily Unavailable");
-		
-		if (!addOperation) {
-			licenseNo.addElement("Permanently Unavailable");
-		}
-		
-		
+		this.customer = customer;	
 
 		center.add(new JLabel("Name:", JLabel.RIGHT));
 		center.add(nameInput);
@@ -52,21 +31,12 @@ public class CustomerEntryDialog extends AbstractDialog {
 		center.add(new JLabel("Tel Number:", JLabel.RIGHT));
 		center.add(phoneNoInput);
 		
-		south.add(submitButton);
-		south.add(resetButton);
-	
-		this.getRootPane().setDefaultButton(submitButton);
-		
 		resetInput();
-		
 		finalizeUI(submitButton, resetButton);
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		Object source = e.getSource();
-
-		if (source == submitButton) {
+	public void submitInput() {
 			
 			String message = "";
 			String name = "", licenseNo = "";
@@ -76,21 +46,21 @@ public class CustomerEntryDialog extends AbstractDialog {
 			
 			try {
 				name = validate("Name", nameInput.getText(), true, 15);
-			} catch (Exception ex) {
+			} catch (ValidationException ex) {
 				message += "\n" + ex.getMessage();
 				invalid++;
 			}
 			
 			try {
 				licenseNo = validate("License Number", licenseInput.getText(), true, 15);
-			} catch (Exception ex) {
+			} catch (ValidationException ex) {
 				message += "\n" + ex.getMessage();
 				invalid++;
 			}
 
 			try {
 				phoneNo = validate("Phone Number", phoneNoInput.getText(), true, 15);
-			} catch (Exception ex) {
+			} catch (ValidationException ex) {
 				message += "\n" + ex.getMessage();
 				invalid++;
 			}
@@ -139,14 +109,9 @@ public class CustomerEntryDialog extends AbstractDialog {
 					JOptionPane.showMessageDialog(this, "Unable to save information: " + ex.getMessage(), getTitle(), JOptionPane.WARNING_MESSAGE);
 				}
 			}
-
-
-		} else if (source == resetButton) {
-			resetInput();
-		}
 	}
 	
-	private void resetInput() {
+	protected void resetInput() {
 		
 		nameInput.grabFocus();
 		

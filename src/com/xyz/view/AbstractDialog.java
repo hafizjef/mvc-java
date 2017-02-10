@@ -62,25 +62,25 @@ public abstract class AbstractDialog extends JDialog implements ActionListener {
 
 	}
 
-	protected String validate(String name, String value, boolean required, int maxlength) throws Exception {
+	protected String validate(String name, String value, boolean required, int maxlength) throws ValidationException {
 		int length = value.trim().length();
 
 		if (required) {
 			if (length == 0) {
-				throw new Exception("- " + name + " is required.");
+				throw new ValidationException("- " + name + " is required.");
 			} else if (maxlength != -1 && length > maxlength) {
-				throw new Exception("- " + "must be between 1-" + maxlength + " characters");
+				throw new ValidationException("- " + "must be between 1-" + maxlength + " characters");
 			}
 		} else {
 			if (maxlength != -1 && length > maxlength) {
-				throw new Exception("- " + "must be less or equals to " + maxlength + " characters");
+				throw new ValidationException("- " + "must be less or equals to " + maxlength + " characters");
 			}
 		}
 
 		return value;	
 	}
 
-	protected double validate(String name, String value, boolean required, boolean hasMin, boolean hasMax, double minVal, double maxVal) throws Exception {
+	protected double validate(String name, String value, boolean required, boolean hasMin, boolean hasMax, double minVal, double maxVal) throws ValidationException {
 
 		value = value.trim();
 		double number = 0;
@@ -88,7 +88,7 @@ public abstract class AbstractDialog extends JDialog implements ActionListener {
 		
 		
 		if (required && empty) {
-			throw new Exception("- " + name + " is required.");
+			throw new ValidationException("- " + name + " is required.");
 
 		}
 
@@ -97,15 +97,15 @@ public abstract class AbstractDialog extends JDialog implements ActionListener {
 			try {
 				number = Double.parseDouble(value);
 			} catch (Exception ex) {
-				throw new Exception("- " + name + " is not in decimal format.");
+				throw new ValidationException("- " + name + " is not in decimal format.");
 			}
 			
 			if (hasMin && number < minVal) {
-				throw new Exception("- " + name + " must be greater than or equals to " + minVal + ".");
+				throw new ValidationException("- " + name + " must be greater than or equals to " + minVal + ".");
 			}
 
 			if (hasMax && number > maxVal) {
-				throw new Exception("- " + name + " must be less than or equals to " + maxVal + ".");
+				throw new ValidationException("- " + name + " must be less than or equals to " + maxVal + ".");
 			}
 		}
 
@@ -113,7 +113,7 @@ public abstract class AbstractDialog extends JDialog implements ActionListener {
 		return number;
 	}
 	
-	protected Date validate(String name, String keyword) throws Exception {
+	protected Date validate(String name, String keyword) throws ValidationException {
 		
 		Date date;
 		
@@ -122,7 +122,7 @@ public abstract class AbstractDialog extends JDialog implements ActionListener {
 		try {
 			date = sdf.parse(keyword);
 		} catch (Exception ex) {
-			throw new Exception("- " + name + " is incorrect format");
+			throw new ValidationException("- " + name + " is incorrect format");
 		}
 		
 		return date;

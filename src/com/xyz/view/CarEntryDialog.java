@@ -1,11 +1,8 @@
 package com.xyz.view;
 
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -14,24 +11,19 @@ import javax.swing.JTextField;
 import com.xyz.crms.controller.manager.Facade;
 import com.xyz.crms.model.Car;
 
-public class CarEntryDialog extends AbstractDialog {
+public class CarEntryDialog extends AbstractEntryDialog {
 
 	private static final long serialVersionUID = 1L;
-
-	private JButton submitButton = new JButton("Submit");
-	private JButton resetButton = new JButton("Reset");
 
 	private JTextField plateNoInput = new JTextField();
 	private JTextField modelInput = new JTextField();
 	private JTextField priceInput = new JTextField();
 	private JComboBox<String> statusInput = new JComboBox<>();
-
-	private boolean addOperation;
 	
 	private Car car;
 	
 	public CarEntryDialog(MainMenuFrame frame, Car car) {
-		super(frame, new GridLayout(4, 2, 5, 5));
+		super(frame, car, 4);
 
 		this.car = car;
 		this.addOperation = car == null;
@@ -57,21 +49,12 @@ public class CarEntryDialog extends AbstractDialog {
 		center.add(new JLabel("Status:", JLabel.RIGHT));
 		center.add(statusInput);
 		
-		south.add(submitButton);
-		south.add(resetButton);
-	
-		this.getRootPane().setDefaultButton(submitButton);
-		
 		resetInput();
-		
 		finalizeUI(submitButton, resetButton);
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		Object source = e.getSource();
-
-		if (source == submitButton) {
+	protected void submitInput() {
 			
 			char status = statusInput.getSelectedItem().toString().charAt(0);
 			
@@ -83,21 +66,21 @@ public class CarEntryDialog extends AbstractDialog {
 			
 			try {
 				plateNo = validate("Plate number", plateNoInput.getText(), true, 15);
-			} catch (Exception ex) {
+			} catch (ValidationException ex) {
 				message += "\n" + ex.getMessage();
 				invalid++;
 			}
 			
 			try {
 				model = validate("Model", modelInput.getText(), true, 15);
-			} catch (Exception ex) {
+			} catch (ValidationException ex) {
 				message += "\n" + ex.getMessage();
 				invalid++;
 			}
 
 			try {
 				price = validate("Price", priceInput.getText(), true, true, true, 1, 20);
-			} catch (Exception ex) {
+			} catch (ValidationException ex) {
 				message += "\n" + ex.getMessage();
 				invalid++;
 			}
@@ -147,14 +130,10 @@ public class CarEntryDialog extends AbstractDialog {
 					JOptionPane.showMessageDialog(this, "Unable to save information: " + ex.getMessage(), getTitle(), JOptionPane.WARNING_MESSAGE);
 				}
 			}
-
-
-		} else if (source == resetButton) {
-			resetInput();
-		}
 	}
 	
-	private void resetInput() {
+	@Override
+	protected void resetInput() {
 		
 		plateNoInput.grabFocus();
 		
