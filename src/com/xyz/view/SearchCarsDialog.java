@@ -14,9 +14,11 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 
 import com.xyz.crms.controller.manager.Facade;
 import com.xyz.crms.model.Car;
@@ -40,6 +42,11 @@ public class SearchCarsDialog extends JDialog implements ActionListener {
 		JPanel center = new JPanel(new BorderLayout());
 		JPanel south = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		BoxLayout box = new BoxLayout(north, BoxLayout.LINE_AXIS);
+		
+		carList.setEnabled(false);
+		carList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
+		editButton.setEnabled(false);
 		
 		north.add(criteriaInput);
 		north.add(searchInput);
@@ -81,15 +88,37 @@ public class SearchCarsDialog extends JDialog implements ActionListener {
 				if (type == 0 || type == 1) {
 					cars = facade.searchCars(keyword, type);
 				} else {
-					double price = Double.parseDouble(keyword);
+					
+					double price;
+					
+					try {
+						price = Double.parseDouble(keyword);
+					} catch (Exception ex) {
+						JOptionPane.showMessageDialog(this, "Invalid value", getTitle(), JOptionPane.INFORMATION_MESSAGE);
+						searchInput.grabFocus();
+						return;
+					}
+					
 					cars = facade.searchCars(price, type - 2);
 				}
 				
 				DefaultListModel<Car> model = new DefaultListModel<>();
 				
-				for (Car car : cars) {
-					model.addElement(car);
+				if (cars.size() !=0) {
+					carList.setEnabled(true);
+					editButton.setEnabled(true);
+					
+					for (Car car : cars) {
+						model.addElement(car);
+					}
+					
+				} else {
+					JOptionPane.showMessageDialog(this, "No results found", getTitle(), JOptionPane.INFORMATION_MESSAGE);
+					carList.setEnabled(false);
+					editButton.setEnabled(false);
+					searchInput.grabFocus();
 				}
+				
 				
 				carList.setModel(model);
 			} catch (SQLException ex) {
@@ -99,7 +128,11 @@ public class SearchCarsDialog extends JDialog implements ActionListener {
 			
 			Car car = carList.getSelectedValue();
 			
-			new EditCarDialog((MainMenuFrame) this.getParent(), car);
+			if (car != null) {
+				new EditCarDialog((MainMenuFrame) this.getParent(), car);
+			} else {
+				JOptionPane.showMessageDialog(this, "Please select a car to edit", getTitle(), JOptionPane.INFORMATION_MESSAGE);
+			}
 		}
 		
 	}
