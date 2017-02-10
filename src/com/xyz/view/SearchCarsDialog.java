@@ -1,9 +1,7 @@
 package com.xyz.view;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -12,7 +10,6 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -23,7 +20,7 @@ import javax.swing.ListSelectionModel;
 import com.xyz.crms.controller.manager.Facade;
 import com.xyz.crms.model.Car;
 
-public class SearchCarsDialog extends JDialog implements ActionListener {
+public class SearchCarsDialog extends AbstractDialog {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -36,17 +33,16 @@ public class SearchCarsDialog extends JDialog implements ActionListener {
 	private JButton editButton = new JButton("Edit");
 	
 	public SearchCarsDialog(MainMenuFrame frame) {
-		super(frame, frame.getTitle(), true);
+		super(frame, new BorderLayout());
 		
 		JPanel north = new JPanel();
-		JPanel center = new JPanel(new BorderLayout());
-		JPanel south = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		BoxLayout box = new BoxLayout(north, BoxLayout.LINE_AXIS);
 		
+		
+		editButton.setEnabled(false);
 		carList.setEnabled(false);
 		carList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
-		editButton.setEnabled(false);
 		
 		north.add(criteriaInput);
 		north.add(searchInput);
@@ -56,22 +52,12 @@ public class SearchCarsDialog extends JDialog implements ActionListener {
 		center.add(new JScrollPane(carList));
 		
 		north.setLayout(box);
-		center.setBorder(BorderFactory.createEmptyBorder(5, 16, 0, 16));
 		north.setBorder(BorderFactory.createEmptyBorder(16, 16, 0, 16));
-		south.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 16));
 		
-		searchButton.addActionListener(this);
-		editButton.addActionListener(this);
 		
 		this.add(north, BorderLayout.NORTH);
-		this.add(center, BorderLayout.CENTER);
-		this.add(south, BorderLayout.SOUTH);
 
-		this.setSize(400, 300);
-		this.setResizable(false);
-		this.setLocationRelativeTo(null);
-		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		this.setVisible(true);
+		finalizeUI(searchButton, editButton);
 	}
 
 	@Override

@@ -1,26 +1,20 @@
 package com.xyz.view;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
-import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.xyz.crms.controller.manager.Facade;
 import com.xyz.crms.model.Car;
 
-public class CarEntryDialog extends JDialog implements ActionListener {
+public class CarEntryDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 
@@ -37,7 +31,7 @@ public class CarEntryDialog extends JDialog implements ActionListener {
 	private Car car;
 	
 	public CarEntryDialog(MainMenuFrame frame, Car car) {
-		super(frame, frame.getTitle(), true);
+		super(frame, new GridLayout(4, 2, 5, 5));
 
 		this.car = car;
 		this.addOperation = car == null;
@@ -53,14 +47,6 @@ public class CarEntryDialog extends JDialog implements ActionListener {
 		
 		statusInput.setModel(model);
 		
-		JPanel center = new JPanel(new GridLayout(4, 2, 5, 5));
-		JPanel south = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-
-		center.setBorder(BorderFactory.createEmptyBorder(16, 16, 0, 16));
-		south.setBorder(BorderFactory.createEmptyBorder(12, 10, 10, 10));
-
-		this.add(center, BorderLayout.CENTER);
-		this.add(south, BorderLayout.SOUTH);
 
 		center.add(new JLabel("Plate Number:", JLabel.RIGHT));
 		center.add(plateNoInput);
@@ -70,22 +56,15 @@ public class CarEntryDialog extends JDialog implements ActionListener {
 		center.add(priceInput);
 		center.add(new JLabel("Status:", JLabel.RIGHT));
 		center.add(statusInput);
-
-
+		
 		south.add(submitButton);
 		south.add(resetButton);
-
-		submitButton.addActionListener(this);
-		resetButton.addActionListener(this);
+	
+		this.getRootPane().setDefaultButton(submitButton);
 		
 		resetInput();
-		this.getRootPane().setDefaultButton(submitButton);
-
-		this.pack();
-		this.setResizable(false);
-		this.setLocationRelativeTo(frame);
-		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		this.setVisible(true);
+		
+		finalizeUI(submitButton, resetButton);
 	}
 
 	@Override
@@ -93,34 +72,27 @@ public class CarEntryDialog extends JDialog implements ActionListener {
 		Object source = e.getSource();
 
 		if (source == submitButton) {
-			// TODO Implement submit
-			String message = "";
-			String plateNo = plateNoInput.getText().trim();
-			String model = modelInput.getText().trim();
-			double price = 0;
+			
 			char status = statusInput.getSelectedItem().toString().charAt(0);
+			
+			String message = "";
+			String plateNo = null, model = null;
+			double price = -1;
 
 			int invalid = 0;
-
-			if (plateNo.isEmpty()) {
+			
+			try {
+				plateNo = validate("Plate number", plateNoInput.getText(), true, 15);
+			} catch (Exception ex) {
+				message += "\n" + ex.getMessage();
 				invalid++;
-				message += "\n- Plate number is required";
-
-			} else {
-				if (plateNo.length() > 15) {
-					invalid++;
-					message += "\n- Plate number must be less than 16 chars";
-				}
 			}
-
-			if (model.isEmpty()) {
+			
+			try {
+				model = validate("Model", modelInput.getText(), true, 15);
+			} catch (Exception ex) {
+				message += "\n" + ex.getMessage();
 				invalid++;
-				message += "\n- Model is required";
-			} else {
-				if (model.length() > 100) {
-					invalid++;
-					message += "\n- Model must be less than 101 chars";
-				}
 			}
 
 			try {
@@ -166,6 +138,7 @@ public class CarEntryDialog extends JDialog implements ActionListener {
 							JOptionPane.showMessageDialog(this, "Unable to add a new car", getTitle(), JOptionPane.WARNING_MESSAGE);
 						}
 						
+						resetInput();
 					} else {
 						
 						int update = facade.updateCar(car);
@@ -189,6 +162,8 @@ public class CarEntryDialog extends JDialog implements ActionListener {
 	}
 	
 	private void resetInput() {
+		
+		plateNoInput.grabFocus();
 		
 		if (addOperation) {
 			// On add car, Clear all input boxes

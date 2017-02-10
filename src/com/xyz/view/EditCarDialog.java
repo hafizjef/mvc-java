@@ -1,25 +1,19 @@
 package com.xyz.view;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import com.xyz.crms.controller.manager.Facade;
 import com.xyz.crms.model.Car;
 
-public class EditCarDialog extends JDialog implements ActionListener {
+public class EditCarDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 
@@ -35,7 +29,7 @@ public class EditCarDialog extends JDialog implements ActionListener {
 	private Car car;
 
 	public EditCarDialog(MainMenuFrame frame, Car car) {
-		super(frame, frame.getTitle(), true);
+		super(frame, new GridLayout(4, 2, 5, 5));
 
 		this.car = car;
 
@@ -56,16 +50,6 @@ public class EditCarDialog extends JDialog implements ActionListener {
 			break;
 		}
 
-
-		JPanel center = new JPanel(new GridLayout(4, 2, 5, 5));
-		JPanel south = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-
-		center.setBorder(BorderFactory.createEmptyBorder(16, 16, 0, 16));
-		south.setBorder(BorderFactory.createEmptyBorder(12, 10, 10, 10));
-
-		this.add(center, BorderLayout.CENTER);
-		this.add(south, BorderLayout.SOUTH);
-
 		center.add(new JLabel("Plate Number:", JLabel.RIGHT));
 		center.add(plateNoInput);
 		center.add(new JLabel("Model:", JLabel.RIGHT));
@@ -82,11 +66,7 @@ public class EditCarDialog extends JDialog implements ActionListener {
 		submitButton.addActionListener(this);
 		resetButton.addActionListener(this);
 
-		this.pack();
-		this.setResizable(false);
-		this.setLocationRelativeTo(null);
-		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		this.setVisible(true);
+		finalizeUI();
 	}
 
 	@Override
